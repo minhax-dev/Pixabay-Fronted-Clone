@@ -14,9 +14,9 @@ const useImageFetch = () => {
   const fetchImages = async (searchQuery, pageNum = 1, append = false) => {
     if (append) {
       setLoadingMore(true) // When the append is true we add more images + previous Images so here we loader for 1.5 sec
-      await new Promise((resolve, reject) => {
-        setTimeout(() => resolve, ENV.LOAD_MORE_DELAY);
-      })
+      await new Promise((resolve) =>
+        setTimeout(resolve, ENV.LOAD_MORE_DELAY)
+      );
     } else {
       setLoading(true)
     }
@@ -26,9 +26,8 @@ const useImageFetch = () => {
     // Async Task So we wrap into Try-Catch-Finally Block to handle runtime Error or API Fetching Failing
 
     try {
-      const perPage = loadingMore ? ENV.PER_PAGE_LOAD_MORE : ENV.PER_PAGE_INITIAL
-      const data = PixabayService.fetchImages(searchQuery, perPage, pageNum)
-      console.log(data);
+      const perPage = append ? ENV.PER_PAGE_LOAD_MORE : ENV.PER_PAGE_INITIAL
+      const data = await PixabayService.fetchImages(searchQuery, perPage, pageNum)
 
       if (data.hits && data.hits.length > 0) {
         if (append) {
@@ -49,16 +48,15 @@ const useImageFetch = () => {
       setLoading(false);
       setLoadingMore(false);
     }
-
-  }
+  };
 
   const resetImage = () => {
     setImages([])
     setHasMore(true)
-  }
+  };
 
 
-  return (
+  return {
     images,
     loading,
     loadingMore,
@@ -66,7 +64,7 @@ const useImageFetch = () => {
     hasMore,
     fetchImages,
     resetImage
-  )
+  }
 }
 
 export default useImageFetch
